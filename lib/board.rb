@@ -14,11 +14,4 @@ class Board
       puts
     end
   end
-
-  def invalid_index?(index)
-    return true if index[0].negative? || index[0] > 7
-    return true if index[1].negative? || index[1] > 7
-
-    false
-  end
 end

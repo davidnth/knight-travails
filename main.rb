@@ -8,4 +8,5 @@ board = game.board
 game.print_board
 
 knight1 = Knight.new
-p knight1.next_possible_move(game, [6, 7])
+p knight1.next_possible_move([7, 7])
+knight1.knight_moves([3,6], [5,6])
