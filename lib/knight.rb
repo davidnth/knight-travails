@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+require 'pry-byebug'
 
-# Knight Class
-class Knight
-  attr_accessor :current_position, :next_positions
+# Node Class
+class Node
+  attr_accessor :position, :neighbours, :previous
 
   MOVEMENTS = [
     [1, 2], [1, -2],
@@ -11,15 +12,20 @@ class Knight
     [-2, 1], [-2, -1]
   ].freeze
 
-  def initialize
-    @current_position = nil#Move.new(current_position)
-    @next_positions = nil
+  def initialize(position, previous)
+    @previous = previous
+    @position = position
+    @neighbours = next_possible_move
+  end
+
+  def add_edge(neighbour)
+    neighbours << neighbour
   end
 
   # Returns an array of valid next possible positions
-  def next_possible_move(current_position)
-    x = current_position[0]
-    y = current_position[1]
+  def next_possible_move
+    x = position[0]
+    y = position[1]
 
     MOVEMENTS.map { |n| [n[0] + x, n[1] + y] }.select { |n| n unless invalid?(n) }
   end
@@ -29,4 +35,58 @@ class Knight
 
     false
   end
-end 
+
+  # Prints the shortest path from start to finish and how many moves it takes
+  def print_path
+    path = backtrack.reverse
+    puts "You made it in #{path.size - 1} move(s)! Here's your path: \n\n"
+    path.each { |position| p position }
+    self
+  end
+
+  # Takes the finish node and returns an array of coordinates from finish to start
+  def backtrack(node = self, array = [])
+    return array if node.nil?
+
+    array << node.position
+    backtrack(node.previous, array)
+  end
+end
+
+class Knight_graph
+  attr_accessor :nodelist
+
+  def initialize
+    @nodelist = {}
+  end
+
+  def add_node(node, previous = nil)
+    @nodelist[node] = Node.new(node, previous)
+  end
+
+  # Finds the shortest path from a starting node to the
+  def knight_moves(starting_coordinate, end_coordinate)
+    add_node(starting_coordinate)
+    queue = []
+    queue << starting_coordinate
+    loop do
+      current = queue.shift
+      unvisited_neighbours(nodelist[current]).each do |neighbour|
+        add_node(neighbour, nodelist[current])
+        queue << neighbour
+      end
+      break if nodelist[end_coordinate]
+    end
+
+    nodelist[end_coordinate].print_path
+  end
+
+  # Adds neighbours to a node and enqueues them
+  def add_unvisited_neighbours(node)
+    node.neighbours.each { |neighbour| add_node(neighbour, self) unless nodelist[neighbour] }
+  end
+
+  def unvisited_neighbours(node)
+    node.neighbours.select { |neighbour| neighbour unless nodelist[neighbour] }
+  end
+end
