@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'pry-byebug'
 
 # Node Class
 class Node
@@ -18,10 +17,6 @@ class Node
     @neighbours = next_possible_move
   end
 
-  def add_edge(neighbour)
-    neighbours << neighbour
-  end
-
   # Returns an array of valid next possible positions
   def next_possible_move
     x = position[0]
@@ -30,6 +25,7 @@ class Node
     MOVEMENTS.map { |n| [n[0] + x, n[1] + y] }.select { |n| n unless invalid?(n) }
   end
 
+  # Returns true if a position is off the board
   def invalid?(position)
     return true unless position[0].between?(0, 7) && position[1].between?(0, 7)
 
@@ -53,6 +49,7 @@ class Node
   end
 end
 
+# Knight_graph class
 class Knight_graph
   attr_accessor :nodelist
 
@@ -64,7 +61,7 @@ class Knight_graph
     @nodelist[node] = Node.new(node, previous)
   end
 
-  # Finds the shortest path from a starting node to the
+  # Finds the shortest path between 2 coordinates
   def knight_moves(starting_coordinate, end_coordinate)
     add_node(starting_coordinate)
     queue = []
@@ -81,11 +78,7 @@ class Knight_graph
     nodelist[end_coordinate].print_path
   end
 
-  # Adds neighbours to a node and enqueues them
-  def add_unvisited_neighbours(node)
-    node.neighbours.each { |neighbour| add_node(neighbour, self) unless nodelist[neighbour] }
-  end
-
+  # Returns an array of coordinates which have not yet been visited
   def unvisited_neighbours(node)
     node.neighbours.select { |neighbour| neighbour unless nodelist[neighbour] }
   end

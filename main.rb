@@ -3,9 +3,8 @@
 require_relative 'lib/board'
 require_relative 'lib/knight'
 
-game = Board.new
-board = game.board
+# game = Board.new
 
 knight = Knight_graph.new
 
-knight.knight_moves([3,3], [4,3])
+knight.knight_moves([3, 3], [4, 3])
